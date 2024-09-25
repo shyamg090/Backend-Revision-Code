@@ -6,13 +6,13 @@ const app = express()
 const user = [{
     name: "John Deer",
     kidney: [{
-        healthy: false
+        ishealthy: false
     }]
 },
 {
     name: "Samantha",
     kidney: [{
-        healthy: true
+        ishealthy: true
     }]
 }]
 
@@ -20,13 +20,27 @@ app.use(bodyParser.json())
 
 app.get('/hospital', (req, res) => {
 
-    const filter = user.filter((item) => {
+    const filtered = user.filter((item) => {
         return item.name === "John Deer"
     })
-    console.log(filter[0]);
-    const count = filter[0].kidney.length.toString()
+    // console.log(filtered[0]);
 
-    res.send("No of kidney is: " + count );
+    const healthykidney = filtered[0].kidney.filter((item) => {
+        return item.ishealthy === true
+    })
+
+    const unhealthykidney = filtered[0].kidney.filter((item) => {
+        return item.ishealthy === false
+    })
+
+    // console.log(filter[0]);
+    const count = filtered[0].kidney.length.toString()
+
+    res.json({
+        total_kdidney : count, 
+        healthykidney : healthykidney.length,
+        unhealthykidney : unhealthykidney.length
+    });
 })
 
 app.post('/hospital', (req, res) => {
@@ -36,9 +50,22 @@ app.post('/hospital', (req, res) => {
 
 app.put('/hospital', (req, res) => {
     
+    for(let i=0; i<user[0].kidney.length; i++){
+        user[0].kidney[i].ishealthy = true;
+    }
+    res.json({})
 })
+
 app.delete('/hospital', (req, res) => {
 
+    const newuser = user[0].kidney.filter((item)=>{
+        return item.ishealthy = true
+    })
+    user[0].kidney = newuser;
+
+    console.log(user[0]);
+
+    res.json({})
 })
 
 app.listen(4000, () => {
