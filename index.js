@@ -1,34 +1,38 @@
-const express = require('express')
+const express = require('express');
 
-const app = express()
+const app = express();
 
-app.get('/', (req, res)=>{
-    res.send('<h1>hello world</h1>')
-})
+const {responseMiddleware} = require('./responsemidleware')
 
-// a backend calculator : sum of n number till num
-// frontend query - localhost:3000?num=10
-const calculate = (num)=>{
-    let ans = 0;
-    for(let i=0; i <= num; i++ ){
-        ans = ans + i
+app.use(express.json())
+
+// middleware to check the average response time needed
+app.use(responseMiddleware);
+
+const authmiddleware = (req,res,next) => {
+    const username = req.headers.username;
+    const password = req.headers.password;
+
+    if(!(username === "shyam" && password === "123")){
+        res.send('Invalid input user not found')
     }
-    return ans 
+    next();
 }
 
-app.get('/', (req, res)=>{
-    const port = 3000
-    res.send("This is a string from port : ", port.toString())
+app.get('/', authmiddleware ,responseMiddleware, (req, res)=>{
+    res.json({
+        msg : "your kidney is fine as your auth seems fine"
+    })
 })
 
-app.post('/', (req, res)=>{
-    const n = req.query.num;
-    const ans = calculate(n);
-    // res.json({ans : ans})
-    // res.send(ans) -- gives ans error as its number other than **status code**
-    res.send(ans.toString())
-})
+// global chaches to catch the error - so that user must know the error (bad page)
 
-app.listen(3000, ()=>{
-    console.log('Server started!!');
+app.use( (err, req, res, next)=>{
+    res.json({
+        msg : "oops seems like there was on error."
+    })
+} )
+
+app.listen(4001, ()=>{
+    console.log('index server is running');
 })
