@@ -9,7 +9,6 @@ app.use(express.json())
 // middleware to check the average response time needed
 app.use(responseMiddleware);
 
-
 // what if the middle ware is calling a api call or 
 // fetching from another server
 
@@ -19,7 +18,7 @@ const randomMiddleware = async (req, res, next)=>{
     })
 
     // things to do with this data
-    
+
     next();
 }
 
@@ -46,7 +45,6 @@ app.use( (err, req, res, next)=>{
         msg : "oops seems like there was on error."
     })
 } )
-
 
 app.listen(4001, ()=>{
     console.log('index server is running');
