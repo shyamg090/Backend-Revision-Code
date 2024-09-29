@@ -65,8 +65,6 @@ app.post('/signup', async (req, res, next)=>{
         })
     });
 
-
-
 })
 
 app.post('/signin', (req, res, next)=>{
